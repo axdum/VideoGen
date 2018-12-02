@@ -1,0 +1,10 @@
+@author "DUMONT Axel"
+VideoGen {
+	mandatory videoseq v1 "C:\\Users\\Axel\\Videos\\goals\\2ndPoteauPavard.mp4"
+	optional videoseq v2 "C:\\Users\\Axel\\Videos\\goals\\MBappe.mp4"
+	alternatives v3 {
+		videoseq v31 "C:\\Users\\Axel\\Videos\\goals\\Christodoulopoulos.mp4"
+		videoseq v32 "C:\\Users\\Axel\\Videos\\goals\\Messi.mp4"
+		videoseq v33 "C:\\Users\\Axel\\Videos\\goals\\MoSalah.mp4"
+	}
+}

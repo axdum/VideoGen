@@ -1,0 +1,24 @@
+@author "DUMONT Axel"
+VideoGen {
+	mandatory videoseq v0 "files\\clips\\intro.mp4"{
+		filter b&w
+		text {
+			content "Best goals of 2018"
+			position CENTER
+			color 'white'
+			size 064
+		}
+	}
+	mandatory videoseq v1 "files\\clips\\Pavard.mp4"
+	optional videoseq v2 "files\\clips\\Pavard_C.mp4"
+	alternatives v3 {
+		videoseq v31 "files\\clips\\Pavard_R1.mp4"
+		videoseq v32 "files\\clips\\Pavard_R2.mp4"
+	}
+	mandatory videoseq v4 "files\\clips\\Bale.mp4"
+	optional videoseq v5 "files\\clips\\Bale_C.mp4"
+	alternatives v6 {
+		videoseq v61 "files\\clips\\Bale_R1.mp4"
+		videoseq v62 "files\\clips\\Bale_R2.mp4"
+	}
+}
