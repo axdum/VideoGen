@@ -26,6 +26,7 @@ import org.xtext.example.mydsl.videoGen.VideoSeq;
 
 import spark.Response;
 
+// Tools to manage files. 
 public class FileHelper {
 	/**
 	 * Print content in a file (UTF-8).
@@ -167,5 +168,35 @@ public class FileHelper {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Delete file.
+	 * 
+	 * @param fileLocation : File to delete location
+	 */
+	public static void deleteFile(String fileLocation) {
+		File f = new File(fileLocation);
+		try {
+			if (f.delete()) {
+				System.out.println(f.getName() + " is deleted!");
+			} else {
+				System.out.println("Delete operation is failed.");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Delete All files in directory
+	 * 
+	 * @param dirLocation
+	 */
+	public static void cleanDirectory(String dirLocation) {
+		File dir = new File(dirLocation);
+		for(File file: dir.listFiles()) 
+		    if (!file.isDirectory()) 
+		        file.delete();
 	}
 }

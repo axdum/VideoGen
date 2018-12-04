@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 
+// Tools to execute commands (runtime).
 public class CmdHelper {
 	/**
 	 * Execute a command and get the output from runtime.
@@ -44,7 +45,13 @@ public class CmdHelper {
 		return true;
 	}
 
-	public static boolean execCmd2(String command) {
+	/**
+	 * Execute a command and wait process end, read stream.
+	 * 
+	 * @param command
+	 * @return true if success, false if fail
+	 */
+	public static boolean execCmdVerbose(String command) {
 		try {
 			Runtime rt = Runtime.getRuntime();
 			Process p = rt.exec(command);

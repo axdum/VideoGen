@@ -9,6 +9,7 @@ import org.xtext.example.mydsl.videoGen.FlipFilter;
 import org.xtext.example.mydsl.videoGen.NegateFilter;
 import org.xtext.example.mydsl.videoGen.VideoDescription;
 
+// Tools to generate FFMPEG commands.
 public class FFMPEG {
 	/**
 	 * Get the duration of a file.
@@ -42,9 +43,13 @@ public class FFMPEG {
 				+ "files/videos/video_" + playlistFileName + ".mp4";
 		if (CmdHelper.execCmd(command)) {
 			System.out.println("files/videos/video_" + playlistFileName + ".mp4 generated\n\n");
+			// Delete playlist.txt
+			FileHelper.deleteFile(playlistFileName + ".txt");
 			return true;
 		} else {
 			System.out.println("files/videos/video_" + playlistFileName + ".mp4 generation FAILED\n\n");
+			// Delete playlist.txt
+			FileHelper.deleteFile(playlistFileName + ".txt");
 			return false;
 		}
 	}
@@ -62,7 +67,7 @@ public class FFMPEG {
 				"Generate GIF (fps: " + framesPerSec + ", scale: " + scale + ") from video_" + fileName + "...");
 		String command = "ffmpeg -i " + "files/videos/video_" + fileName + ".mp4 -r 10 -vf scale=" + 1280 * scale + ":"
 				+ 720 * scale + " files/gif/" + fileName + ".gif -hide_banner";
-		if (CmdHelper.execCmd(command)) {
+		if (CmdHelper.execCmdVerbose(command)) {
 			System.out.println(fileName + ".gif generated\n\n");
 			return true;
 		} else {
@@ -72,7 +77,8 @@ public class FFMPEG {
 	}
 
 	/**
-	 * Apply All transformation to a clip
+	 * Apply All transformation to a clip (concat filters and text commands).
+	 * Edited clip is generated in tmp/files/clips.
 	 * 
 	 * @param desc : Clip Description
 	 * @return true if command success
@@ -131,19 +137,19 @@ public class FFMPEG {
 	 * @param filePath : Clip path
 	 * @return true if success
 	 */
-	private static boolean generateThumbnail(String filePath) {
+	public static boolean generateThumbnail(String filePath, String id) {
 		Path path = Paths.get(filePath);
 		String fileName = path.getFileName().toString();
 		if (fileName.indexOf(".") > 0) {
 			fileName = fileName.substring(0, fileName.lastIndexOf("."));
 		}
 		String command = "ffmpeg -y -i " + filePath + " -r 1 -t 00:00:01 -ss 00:00:02 -f image2 files/thumbnails/"
-				+ fileName + ".png";
+				+ id + ".png";
 		if (CmdHelper.execCmd(command)) {
-			System.out.println(fileName + ".png generated");
+			System.out.println(id + ".png generated");
 			return true;
 		} else {
-			System.out.println(fileName + ".png generation failed");
+			System.out.println(id + ".png generation failed");
 			return false;
 		}
 	}
