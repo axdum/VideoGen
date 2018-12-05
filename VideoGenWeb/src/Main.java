@@ -16,13 +16,13 @@ public class Main {
 
 	public static void main(String[] args) {
 		// Start server
-		port(8090);
+		port(8080);
+
+		enableCORS("*", "*", "*");
 
 		// Generate random video
 		get("/generate-random-video/:name/:fps/:scale", (request, response) -> {
 			JSONObject json = new JSONObject();
-			response.header("Access-Control-Allow-Origin", "http://localhost:3000");
-			response.header("Access-Control-Allow-Methods", "POST, GET");
 			response.header("Content-Type", "application/json");
 			int fps = Integer.parseInt(request.params("fps"));
 			double scale = Double.parseDouble(request.params("scale")) / 100;
@@ -39,24 +39,18 @@ public class Main {
 		// Get video preview
 		get("/getGIF/:name", (request, response) -> {
 			response.header("Content-Type", "image/gif");
-			response.header("Access-Control-Allow-Origin", "http://localhost:3000");
-			response.header("Access-Control-Allow-Methods", "GET");
 			String name = request.params("name");
 			return FileHelper.fileToHttpServletResponse("files/gif/" + name + ".gif", response);
 		});
-		
+
 		// Get video preview
 		get("/getVariantsCSV", (request, response) -> {
-					response.header("Access-Control-Allow-Origin", "http://localhost:3000");
-					response.header("Access-Control-Allow-Methods", "GET");
-					return FileHelper.fileToHttpServletResponse("files/csv/variants.csv", response);
-				});
+			return FileHelper.fileToHttpServletResponse("files/csv/variants.csv", response);
+		});
 
 		// Get video
 		get("/getMP4/:name", (request, response) -> {
 			response.header("Content-Type", "video/mp4");
-			response.header("Access-Control-Allow-Origin", "http://localhost:3000");
-			response.header("Access-Control-Allow-Methods", "GET, OPTIONS, HEAD, PUT, POST");
 			String name = request.params("name");
 			return FileHelper.fileToHttpServletResponse("files/videos/video_" + name + ".mp4", response);
 		});
@@ -64,8 +58,6 @@ public class Main {
 		// Get max duration
 		get("/analyzeDurations", (request, response) -> {
 			response.header("Content-Type", "application/json");
-			response.header("Access-Control-Allow-Origin", "http://localhost:3000");
-			response.header("Access-Control-Allow-Methods", "GET, OPTIONS, HEAD, PUT, POST");
 			double[] durations = AnalysisTools.getDurations(videoGenModel);
 			JSONObject json = new JSONObject();
 			json.put("min", (int) (durations[0] + 0.5f));
@@ -76,8 +68,6 @@ public class Main {
 		// Get all variants analysis
 		get("/getVariants", (request, response) -> {
 			response.header("Content-Type", "application/json");
-			response.header("Access-Control-Allow-Origin", "*");
-			response.header("Access-Control-Allow-Methods", "GET, OPTIONS, HEAD, PUT, POST");
 			return AnalysisTools.getAllVariants(videoGenModel);
 		});
 
@@ -85,8 +75,6 @@ public class Main {
 		get("/getModel", (request, response) -> {
 			System.out.println("TEST");
 			response.header("Content-Type", "application/json");
-			response.header("Access-Control-Allow-Origin", "http://localhost:3000");
-			response.header("Access-Control-Allow-Methods", "GET, OPTIONS, HEAD, PUT, POST");
 			FileHelper.cleanDirectory("files/thumbnails");
 			VideoGenService.generateThumbnails(videoGenModel);
 			return VideoGenService.videoModelToJson(videoGenModel).toString();
@@ -96,32 +84,56 @@ public class Main {
 		get("/getThumbnail/:id", (request, response) -> {
 			System.out.println("/getThumbnail/" + request.params("id"));
 			response.header("Content-Type", "image/gif");
-			response.header("Access-Control-Allow-Origin", "http://localhost:3000");
-			response.header("Access-Control-Allow-Methods", "GET, OPTIONS, HEAD, PUT, POST");
 			String id = request.params("id");
 			return FileHelper.fileToHttpServletResponse("files/thumbnails/" + id + ".png", response);
 		});
-		
+
 		// Generate video
-				post("/generate-video/:name/:fps/:scale", (request, response) -> {
+		post("/generate-video/:name/:fps/:scale", (request, response) -> {
 
-					JSONObject json = new JSONObject();
-					response.header("Access-Control-Allow-Origin", "http://localhost:3000");
-					response.header("Access-Control-Allow-Methods", "GET, POST");
-					response.header("Content-Type", "application/json");
-					//int fps = Integer.parseInt(request.params("fps"));
-					//double scale = Double.parseDouble(request.params("scale")) / 100;
-					System.out.println("body : \n" + request.body());
-					//JSONObject clips = new JSONObject(request.body());
-					/*if (VideoGenService.generateVideo(videoGenModel, request.params("name"), fps, scale, clips)) {
-						json.put("status", "OK");
-						json.put("message", "Video generated.");
-					} else {*/
-						json.put("status", "KO");
-						json.put("message", "Server Error");/*
-					}*/
-					return json;
-				});
+			JSONObject json = new JSONObject();
+			response.header("Content-Type", "application/json");
+			int fps = Integer.parseInt(request.params("fps"));
+			double scale = Double.parseDouble(request.params("scale")) / 100;
+			JSONObject clips = new JSONObject(request.body());
+			System.out.println(request.body());
+			if (VideoGenService.generateVideo(videoGenModel, request.params("name"), fps, scale, clips)) {
+				json.put("status", "OK");
+				json.put("message", "Video generated.");
+			} else {
 
+				json.put("status", "KO");
+				json.put("message", "Server Error");
+			}
+
+			return json;
+		});
+
+	}
+
+	private static void enableCORS(final String origin, final String methods, final String headers) {
+
+		options("/*", (request, response) -> {
+
+			String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
+			if (accessControlRequestHeaders != null) {
+				response.header("Access-Control-Allow-Headers", accessControlRequestHeaders);
+			}
+
+			String accessControlRequestMethod = request.headers("Access-Control-Request-Method");
+			if (accessControlRequestMethod != null) {
+				response.header("Access-Control-Allow-Methods", accessControlRequestMethod);
+			}
+
+			return "OK";
+		});
+
+		before((request, response) -> {
+			response.header("Access-Control-Allow-Origin", origin);
+			response.header("Access-Control-Request-Method", methods);
+			response.header("Access-Control-Allow-Headers", headers);
+			// Note: this may or may not be necessary in your particular application
+			response.type("application/json");
+		});
 	}
 }

@@ -41,15 +41,16 @@ public class FFMPEG {
 		System.out.println("Generate MP4 video from " + playlistFileName + ".txt...");
 		String command = "ffmpeg -flush_packets 1 -y -f concat -safe 0 -i " + playlistFileName + ".txt -c copy "
 				+ "files/videos/video_" + playlistFileName + ".mp4";
-		if (CmdHelper.execCmd(command)) {
+		System.out.println(":::::::::" +command);
+		if (CmdHelper.execCmdVerbose(command)) {
 			System.out.println("files/videos/video_" + playlistFileName + ".mp4 generated\n\n");
 			// Delete playlist.txt
-			FileHelper.deleteFile(playlistFileName + ".txt");
+			//FileHelper.deleteFile(playlistFileName + ".txt");
 			return true;
 		} else {
 			System.out.println("files/videos/video_" + playlistFileName + ".mp4 generation FAILED\n\n");
 			// Delete playlist.txt
-			FileHelper.deleteFile(playlistFileName + ".txt");
+			//FileHelper.deleteFile(playlistFileName + ".txt");
 			return false;
 		}
 	}
@@ -67,7 +68,7 @@ public class FFMPEG {
 				"Generate GIF (fps: " + framesPerSec + ", scale: " + scale + ") from video_" + fileName + "...");
 		String command = "ffmpeg -i " + "files/videos/video_" + fileName + ".mp4 -r 10 -vf scale=" + 1280 * scale + ":"
 				+ 720 * scale + " files/gif/" + fileName + ".gif -hide_banner";
-		if (CmdHelper.execCmdVerbose(command)) {
+		if (CmdHelper.execCmd(command)) {
 			System.out.println(fileName + ".gif generated\n\n");
 			return true;
 		} else {
@@ -84,7 +85,7 @@ public class FFMPEG {
 	 * @return true if command success
 	 */
 	public static boolean editClip(VideoDescription desc) {
-		String command = "ffmpeg -i " + desc.getLocation() + " -vf ";
+		String command = "ffmpeg -flush_packets 1 -i " + desc.getLocation() + " -vf ";
 		String commandEnd = " -codec:a copy tmp\\" + desc.getLocation();
 		if (desc.getFilter() != null) {
 			String filter = "";
@@ -123,7 +124,7 @@ public class FFMPEG {
 		}
 		command += " -codec:a copy tmp\\" + desc.getLocation();
 		System.out.println(command);
-		if (CmdHelper.execCmd(command)) {
+		if (CmdHelper.execCmdVerbose(command)) {
 			System.out.println("EDIT COMMAND EXECUTED");
 			return true;
 		} else {

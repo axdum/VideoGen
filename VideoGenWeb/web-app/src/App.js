@@ -111,11 +111,6 @@ class App extends Component {
       position: toast.POSITION.BOTTOM_RIGHT,
       autoClose: 10000
     })
-    toast("not implemented yet...", {
-      position: toast.POSITION.BOTTOM_RIGHT,
-      autoClose: 10000,
-      type: "warning"
-    })
     var clips = {};
     clips['clips'] = this.state.selected;
     const response = await generateVideo(name, fps, scale, clips);
