@@ -6,17 +6,23 @@ We can analyze all possible variants but also the performance of the solution us
 ### Screencast
 https://youtu.be/nyPEqfZIbFU
 ## Installation
-###Requirements
+<b>Requirements</b>
 <ul>
 <li>Node.Js</li>
 <li>Java IDE, Maven and DSL Tools</li>
 <li>FFMPEG</>
 </ul>
-### Server-side
-Import /VideoGenWeb as a maven project
-Run server
-### Client-side
-Install /VideoGenWeb/web-app
+ <b>Server-side</b>
+  
+1. Import /VideoGenWeb as a maven project
+2. Run server
+
+ <b>Client-side</b>
+ 
+1. Install /VideoGenWeb/web-app
+ 
 ```npm i```
-Run web-app
+
+2. Run web-app
+
 ```npm start``` 
